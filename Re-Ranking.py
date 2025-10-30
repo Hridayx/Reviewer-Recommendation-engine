@@ -2,8 +2,10 @@
 import pickle
 from pathlib import Path
 
-# Load author profiles (load once at module level)
-AUTHOR_PROFILES_PATH = r"C:\Users\karva\OneDrive\Desktop\Reviewer-Recommendation-engine\PKL_files\author_profiles.pkl"
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent
+AUTHOR_PROFILES_PATH = BASE_DIR / "PKL_files" / "author_profiles.pkl"
 try:
     with open(AUTHOR_PROFILES_PATH, 'rb') as f:
         AUTHOR_PROFILES = pickle.load(f)
@@ -233,7 +235,7 @@ def display_results(results): #Display re-ranked results in formatted manner
 
 if __name__ == "__main__":
     # Test the re-ranking system
-    test_pdf = "C:/Users/karva/OneDrive/Desktop/Tooth_Segmentation/Clinical Validation of Deep Learning for Segmentation of.pdf"
+    test_pdf =r"C:\Users\Hrida\OneDrive\Desktop\Applied AI\Assignment-2\Attention is all you need.pdf"
     
     # Get re-ranked results
     results = get_reranked_recommendations(test_pdf, top_k=10)

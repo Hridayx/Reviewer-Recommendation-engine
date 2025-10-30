@@ -109,7 +109,7 @@ def get_rrf_rankings(pdf_input, top_k=10): #Simple API function for RRF rankings
 
 if __name__ == "__main__":
     # Test RRF ensemble
-    pdf_path = r"C:\Users\karva\OneDrive\Desktop\Reviewer-Recommendation-engine\Clinical Validation of Deep Learning for Segmentation of.pdf"
+    pdf_path = r"C:\Users\Hrida\OneDrive\Desktop\Applied AI\Assignment-2\Nano-Composites_and_their_Applications_A_review.pdf"
     
     # Run RRF ensemble
     results = rrf_ensemble(pdf_path, top_k=10, k=60)

@@ -6,13 +6,18 @@ import fitz  # PyMuPDF
 import re
 import os
 import io
-class ReviewerRecommender: #Sentence Transformer based reviewer recommendation
+from pathlib import Path
 
-    def __init__(self, embeddings_path=r'C:\Users\karva\OneDrive\Desktop\Reviewer-Recommendation-engine\PKL_files\sentence_transformer_embeddings.pkl'): #Load pre-computed embeddings and model
+class ReviewerRecommender:  # Sentence Transformer based reviewer recommendation
+    def __init__(self, embeddings_path=None):
+        if embeddings_path is None:
+            BASE_DIR = Path(__file__).parent
+            embeddings_path = BASE_DIR / "PKL_files" / "sentence_transformer_embeddings.pkl"
+        
         # Load saved embeddings
         with open(embeddings_path, 'rb') as f:
             saved_data = pickle.load(f)
-
+        
         self.embeddings = saved_data['embeddings']
         self.all_paths = saved_data['all_paths']
         self.author_papers = saved_data['author_papers']
@@ -105,16 +110,19 @@ class ReviewerRecommender: #Sentence Transformer based reviewer recommendation
         
         return rankings
 # Standalone function for RRF integration : rankings: List of (author, rank, score) tuples
-def get_sentence_transformer_rankings(pdf_input, embeddings_path=r'C:\Users\karva\OneDrive\Desktop\Reviewer-Recommendation-engine\PKL_files\sentence_transformer_embeddings.pkl', top_k=10):
-
+def get_sentence_transformer_rankings(pdf_path, embeddings_path=None, top_k=10):
+    if embeddings_path is None:
+        BASE_DIR = Path(__file__).parent
+        embeddings_path = BASE_DIR / "PKL_files" / "sentence_transformer_embeddings.pkl"
+    
     recommender = ReviewerRecommender(embeddings_path)
-    return recommender.recommend_from_pdf(pdf_input, top_k)
+    return recommender.recommend_from_pdf(pdf_path, top_k)
 if __name__ == "__main__":
     # Initialize recommender
-    recommender = ReviewerRecommender(r'C:\Users\karva\OneDrive\Desktop\Reviewer-Recommendation-engine\PKL_files\sentence_transformer_embeddings.pkl')
+    recommender = ReviewerRecommender(r'C:\Users\Hrida\OneDrive\Desktop\Applied AI\Assignment-2\Main\PKL_files\sentence_transformer_embeddings.pkl')
     
     # Test PDF
-    test_pdf = r"C:\Users\karva\OneDrive\Desktop\Reviewer-Recommendation-engine\Clinical Validation of Deep Learning for Segmentation of.pdf"
+    test_pdf = r"C:\Users\Hrida\OneDrive\Desktop\Applied AI\Assignment-2\Attention is all you need.pdf"
 
     # Get rankings
     print("Getting recommendations...\n")
