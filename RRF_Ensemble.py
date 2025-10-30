@@ -47,16 +47,16 @@ def get_author_details(author, bm25_rankings, st_rankings): #Get detailed inform
             break  
     return details
 
-def rrf_ensemble(pdf_path, top_k=10, k=60): #List of (author, rrf_score, details_dict) tuples
+def rrf_ensemble(pdf_input, top_k=10, k=60): #List of (author, rrf_score, details_dict) tuples
     
     print("Running RRF Ensemble\n")
     
     # Get rankings from both methods
     print("1/3 Getting BM25 rankings")
-    bm25_rankings = get_bm25_rankings(pdf_path, k=20)  # Get top-20 from each
+    bm25_rankings = get_bm25_rankings(pdf_input, k=20)  # Get top-20 from each
     
     print("2/3 Getting Sentence Transformer rankings")
-    st_rankings = get_sentence_transformer_rankings(pdf_path, top_k=20)
+    st_rankings = get_sentence_transformer_rankings(pdf_input, top_k=20)
     
     print("3/3 Computing RRF scores...\n")
     
@@ -97,11 +97,11 @@ def display_rrf_results(results): #Display RRF results
         if details['num_papers'] is not None:
             print(f"   Papers: {details['num_papers']}")
 
-def get_rrf_rankings(pdf_path, top_k=10): #Simple API function for RRF rankings
+def get_rrf_rankings(pdf_input, top_k=10): #Simple API function for RRF rankings
 
     #Args: pdf_path: Path to PDF file,top_k: Number of reviewers to return
     #Returns: List of (author, rank, rrf_score) tuples
-    results = rrf_ensemble(pdf_path, top_k=top_k)
+    results = rrf_ensemble(pdf_input, top_k=top_k)
     # Format as (author, rank, score)
     rankings = [(author, i+1, rrf_score) 
                 for i, (author, rrf_score, details) in enumerate(results)]
@@ -109,7 +109,7 @@ def get_rrf_rankings(pdf_path, top_k=10): #Simple API function for RRF rankings
 
 if __name__ == "__main__":
     # Test RRF ensemble
-    pdf_path = r"C:\Users\Hrida\OneDrive\Desktop\Applied AI\Assignment-2\Nano-Composites_and_their_Applications_A_review.pdf"
+    pdf_path = r"C:\Users\karva\OneDrive\Desktop\Reviewer-Recommendation-engine\Clinical Validation of Deep Learning for Segmentation of.pdf"
     
     # Run RRF ensemble
     results = rrf_ensemble(pdf_path, top_k=10, k=60)

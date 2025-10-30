@@ -3,7 +3,7 @@ import pickle
 from pathlib import Path
 
 # Load author profiles (load once at module level)
-AUTHOR_PROFILES_PATH = r"C:\Users\Hrida\OneDrive\Desktop\Applied AI\Assignment-2\Main\PKL_files\author_profiles.pkl"
+AUTHOR_PROFILES_PATH = r"C:\Users\karva\OneDrive\Desktop\Reviewer-Recommendation-engine\PKL_files\author_profiles.pkl"
 try:
     with open(AUTHOR_PROFILES_PATH, 'rb') as f:
         AUTHOR_PROFILES = pickle.load(f)
@@ -180,7 +180,7 @@ def rerank_results(rrf_results, bm25_rankings, st_rankings, top_k=10): #Apply re
     
     return top_results
 
-def get_reranked_recommendations(pdf_path, top_k=10): #Main function: Get re-ranked recommendations from PDF
+def get_reranked_recommendations(pdf_input, top_k=10): #Main function: Get re-ranked recommendations from PDF
     from RRF_Ensemble import rrf_ensemble
     from bm25_query import get_bm25_rankings
     from Sentence_Transformer import get_sentence_transformer_rankings
@@ -191,14 +191,14 @@ def get_reranked_recommendations(pdf_path, top_k=10): #Main function: Get re-ran
     
     # Step 1: Get RRF results
     print("\n[1/4] Running RRF ensemble...")
-    rrf_results = rrf_ensemble(pdf_path, top_k=20, k=60)
+    rrf_results = rrf_ensemble(pdf_input, top_k=20, k=60)
     
     # Step 2: Get BM25 and ST rankings for avg scores
     print("[2/4] Getting BM25 rankings...")
-    bm25_rankings = get_bm25_rankings(pdf_path, k=20)
+    bm25_rankings = get_bm25_rankings(pdf_input, k=20)
     
     print("[3/4] Getting Sentence Transformer rankings...")
-    st_rankings = get_sentence_transformer_rankings(pdf_path, top_k=20)
+    st_rankings = get_sentence_transformer_rankings(pdf_input, top_k=20)
     
     # Step 3: Apply re-ranking
     print("[4/4] Applying re-ranking with boosts...")
@@ -233,7 +233,7 @@ def display_results(results): #Display re-ranked results in formatted manner
 
 if __name__ == "__main__":
     # Test the re-ranking system
-    test_pdf = r"C:\Users\Hrida\OneDrive\Desktop\Applied AI\Assignment-2\Attention is all you need.pdf"
+    test_pdf = "C:/Users/karva/OneDrive/Desktop/Tooth_Segmentation/Clinical Validation of Deep Learning for Segmentation of.pdf"
     
     # Get re-ranked results
     results = get_reranked_recommendations(test_pdf, top_k=10)

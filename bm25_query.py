@@ -3,23 +3,37 @@ from collections import defaultdict
 import numpy as np
 from pathlib import Path
 import fitz  # PyMuPDF
+import os
 
 # import your existing cleaner
 from preprocessing import clean_paper_text
 
 #Load BM25 index and doc metadata:
-bm25 = pickle.load(open(r"C:\Users\Hrida\OneDrive\Desktop\Applied AI\Assignment-2\Main\PKL_files\bm25_index.pkl", "rb"))
-doc_authors = pickle.load(open(r"C:\Users\Hrida\OneDrive\Desktop\Applied AI\Assignment-2\Main\PKL_files\bm25_doc_authors.pkl", "rb"))
-doc_titles  = pickle.load(open(r"C:\Users\Hrida\OneDrive\Desktop\Applied AI\Assignment-2\Main\PKL_files\bm25_doc_titles.pkl", "rb"))
+bm25 = pickle.load(open(r"C:\Users\karva\OneDrive\Desktop\Reviewer-Recommendation-engine\PKL_files\bm25_index.pkl", "rb"))
+doc_authors = pickle.load(open(r"C:\Users\karva\OneDrive\Desktop\Reviewer-Recommendation-engine\PKL_files\bm25_doc_authors.pkl", "rb"))
+doc_titles  = pickle.load(open(r"C:\Users\karva\OneDrive\Desktop\Reviewer-Recommendation-engine\PKL_files\bm25_doc_titles.pkl", "rb"))
 
 
-def extract_text_from_pdf(pdf_path: str) -> str: #Extract text from PDF
-    doc = fitz.open(pdf_path)
-    txt = []
-    for p in doc:
-        txt.append(p.get_text("text"))
+def extract_text_from_pdf(pdf_input):
+    if hasattr(pdf_input, "read"):
+        pdf_input.seek(0)  # reset pointer before reading
+        pdf_bytes = pdf_input.read()
+        if not pdf_bytes:
+            raise ValueError("Uploaded file stream is empty after reset.")
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+    elif isinstance(pdf_input, bytes):
+        doc = fitz.open(stream=pdf_input, filetype="pdf")
+    elif isinstance(pdf_input, (str, os.PathLike)):
+        doc = fitz.open(pdf_input)
+    else:
+        raise ValueError(f"Unsupported input type for extract_text_from_pdf: {type(pdf_input)}")
+
+    text = "\n".join([p.get_text("text") for p in doc])
     doc.close()
-    return "\n".join(txt)
+    return text
+
+
+
 
 
 def bm25_scores_for_query_tokens(query_tokens): #Returns a list of scores aligned to the corpus docs
@@ -99,7 +113,7 @@ def get_bm25_rankings(pdf_path, k=10): #    Returns: List of (author, rank, max_
 
 if __name__ == "__main__":
     # Query from a PDF
-    pdf_path = r"C:\Users\Hrida\OneDrive\Desktop\Applied AI\Assignment-2\Attention is all you need.pdf"
+    pdf_path = r"C:\Users\karva\OneDrive\Desktop\Reviewer-Recommendation-engine\Clinical Validation of Deep Learning for Segmentation of.pdf"
     rankings = rank_authors_from_pdf(pdf_path, k=10, agg="max")
     
     print("\nTOP 10 RECOMMENDED REVIEWERS (BM25)\n")

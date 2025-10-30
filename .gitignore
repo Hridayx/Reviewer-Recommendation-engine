@@ -1,0 +1,24 @@
+# Ignore Python cache and virtual environment
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.env
+.DS_Store
+
+# Ignore large local files
+*.pkl
+*.csv
+*.zip
+*.pdf
+*.json
+*.log
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+*.code-workspace
+
+# Streamlit cache
+.streamlit/

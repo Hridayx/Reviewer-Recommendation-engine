@@ -5,9 +5,10 @@ from sentence_transformers import SentenceTransformer
 import fitz  # PyMuPDF
 import re
 import os
+import io
 class ReviewerRecommender: #Sentence Transformer based reviewer recommendation
 
-    def __init__(self, embeddings_path=r'C:\Users\Hrida\OneDrive\Desktop\Applied AI\Assignment-2\Main\PKL_files\sentence_transformer_embeddings.pkl'): #Load pre-computed embeddings and model
+    def __init__(self, embeddings_path=r'C:\Users\karva\OneDrive\Desktop\Reviewer-Recommendation-engine\PKL_files\sentence_transformer_embeddings.pkl'): #Load pre-computed embeddings and model
         # Load saved embeddings
         with open(embeddings_path, 'rb') as f:
             saved_data = pickle.load(f)
@@ -24,13 +25,37 @@ class ReviewerRecommender: #Sentence Transformer based reviewer recommendation
         text = re.sub(r'\s+', ' ', text)
         text = text.strip()
         return text
-    def extract_text_from_pdf(self, pdf_path):
-        doc = fitz.open(pdf_path)
-        raw_text = ""
-        for page in doc:
-            raw_text += page.get_text()
+    def extract_text_from_pdf(self, pdf_input):
+    
+
+        if isinstance(pdf_input, (str, bytes, os.PathLike)):
+            # Case 1: Path to file or raw bytes
+            if isinstance(pdf_input, bytes):
+                pdf_bytes = pdf_input
+            else:
+                with open(pdf_input, 'rb') as f:
+                    pdf_bytes = f.read()
+            doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+
+        elif hasattr(pdf_input, "read"):
+            # Case 2: Streamlit UploadedFile object
+            try:
+                pdf_input.seek(0)  # Reset the file pointer before reading
+            except Exception:
+                pass
+            pdf_bytes = pdf_input.read()
+            if not pdf_bytes:
+                raise ValueError("⚠️ Uploaded PDF stream is empty. Try re-uploading the file.")
+            doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+
+        else:
+            raise ValueError(f"Unsupported input type for extract_text_from_pdf: {type(pdf_input)}")
+
+        text = "\n".join(page.get_text("text") for page in doc)
         doc.close()
-        return raw_text
+        return text
+
+
     def get_rankings(self, new_paper_text, top_k=10): #Get reviewer rankings for new paper(author, rank, max_score, avg_score, num_papers)
 
         # Truncate to 512 tokens
@@ -70,9 +95,9 @@ class ReviewerRecommender: #Sentence Transformer based reviewer recommendation
         
         return rankings
     
-    def recommend_from_pdf(self, pdf_path, top_k=10):
+    def recommend_from_pdf(self, pdf_input, top_k=10):
         # Extract and preprocess
-        raw_text = self.extract_text_from_pdf(pdf_path)
+        raw_text = self.extract_text_from_pdf(pdf_input)
         processed_text = self.preprocess_text(raw_text)
         
         # Get rankings
@@ -80,16 +105,16 @@ class ReviewerRecommender: #Sentence Transformer based reviewer recommendation
         
         return rankings
 # Standalone function for RRF integration : rankings: List of (author, rank, score) tuples
-def get_sentence_transformer_rankings(pdf_path, embeddings_path=r'C:\Users\Hrida\OneDrive\Desktop\Applied AI\Assignment-2\Main\PKL_files\sentence_transformer_embeddings.pkl', top_k=10):
+def get_sentence_transformer_rankings(pdf_input, embeddings_path=r'C:\Users\karva\OneDrive\Desktop\Reviewer-Recommendation-engine\PKL_files\sentence_transformer_embeddings.pkl', top_k=10):
 
     recommender = ReviewerRecommender(embeddings_path)
-    return recommender.recommend_from_pdf(pdf_path, top_k)
+    return recommender.recommend_from_pdf(pdf_input, top_k)
 if __name__ == "__main__":
     # Initialize recommender
-    recommender = ReviewerRecommender(r'C:\Users\Hrida\OneDrive\Desktop\Applied AI\Assignment-2\Main\PKL_files\sentence_transformer_embeddings.pkl')
+    recommender = ReviewerRecommender(r'C:\Users\karva\OneDrive\Desktop\Reviewer-Recommendation-engine\PKL_files\sentence_transformer_embeddings.pkl')
     
     # Test PDF
-    test_pdf = r"C:\Users\Hrida\OneDrive\Desktop\Applied AI\Assignment-2\Attention is all you need.pdf"
+    test_pdf = r"C:\Users\karva\OneDrive\Desktop\Reviewer-Recommendation-engine\Clinical Validation of Deep Learning for Segmentation of.pdf"
 
     # Get rankings
     print("Getting recommendations...\n")
