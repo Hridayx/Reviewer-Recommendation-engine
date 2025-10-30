@@ -3,6 +3,8 @@
 
 Automated Reviewer Recommendation System for top 10 expert reviewers for research papers using hybrid retrieval and multi-factor re-ranking.
 
+**Contributors:**
+Hriday macha , Deekshitha karvan
 ---
 
 ## **Overview**
@@ -40,9 +42,9 @@ Upload PDF → View top 10 recommendations with metrics
 
 ### **Stage 1: Hybrid Retrieval**
 
-**BM25:** Exact keyword matching (Okapi BM25, k1=1.5, b=0.75)
+**BM25:** Exact keyword matching
 
-**Sentence Transformers:** Semantic similarity (all-MiniLM-L6-v2)
+**Sentence Transformers:** Semantic similarity 
 
 Both return top 20 authors
 
