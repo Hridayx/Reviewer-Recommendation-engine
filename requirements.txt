@@ -1,9 +1,7 @@
 # requirements.txt for Reviewer-Recommendation-engine
-# Inferred from attached modules: bm25_query.py, RRF_Ensemble.py, Re-Ranking.py
-# - Core: numpy
 # - PDF extraction: PyMuPDF (imported as `fitz` in code)
 # - Sentence-transformer based ranking (Sentence Transformer module is used by RRF/reevaluator)
-# - Optional/likely: torch, transformers, scikit-learn, faiss for nearest-neighbor search, rank_bm25 if building BM25 index
+
 
 numpy>=1.21
 pymupdf>=1.22.0   # provides `fitz` used for PDF text extraction
@@ -19,8 +17,4 @@ streamlit
 
 
 
-# Notes:
-# - If you don't use FAISS, you can omit `faiss-cpu`.
-# - For `torch`, follow the official install instructions for CUDA support if you have a GPU.
-# - `sentence-transformers` will pull `transformers` and other deps, but pinning them helps avoid surprises.
-# - Local modules like `preprocessing` are not included here.
+
