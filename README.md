@@ -4,7 +4,7 @@
 Automated Reviewer Recommendation System for top 10 expert reviewers for research papers using hybrid retrieval and multi-factor re-ranking.
 
 **Contributors:**
-Hriday macha , Deekshitha karvan
+Hriday Macha , Deekshitha karvan
 ---
 
 ## **Overview**
